@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 
 import Navbar from "./components/navbar/Navbar";
 import Home from "./components/home/Home";
@@ -36,6 +36,7 @@ const App = () => {
           <Route exact path="/" component={Home} />
           <Route exact path="/cart" component={Cart} />
           <Route exact path="/products/:id" component={DetailView} />
+          <Redirect to="/" />
         </Switch>
       </ThemeProvider>
     </BrowserRouter>
