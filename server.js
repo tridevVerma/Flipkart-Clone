@@ -18,9 +18,10 @@ app.use(express.json());
 app.use("/newUser", registerRoute);
 app.use("/login", loginRoute);
 app.use("/products", productsRoute);
+
 const URL = process.env.MONGODB_URI || process.env.DB_URL;
 
-if (process.env.NODE_ENV == "production") {
+if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
 }
 
