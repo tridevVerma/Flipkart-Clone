@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import User from "../models/newUserSchema.js";
 
 const loginUser = async (req, res) => {
@@ -10,17 +11,18 @@ const loginUser = async (req, res) => {
     else emailExist = await User.findOne({ email: req.body.emailORPhone });
     if (mobileExist || emailExist) {
       let userFound;
-      if (mobileExist)
-        userFound = await User.findOne({
-          $and: [{ mobileno: req.body.emailORPhone }, { PWD: req.body.pass }],
-        });
-      else
-        userFound = await User.findOne({
-          $and: [{ email: req.body.emailORPhone }, { PWD: req.body.pass }],
-        });
+      let userIdentified;
+      if (mobileExist) {
+        userFound = await bcrypt.compare(req.body.pass, mobileExist.PWD);
+        userIdentified = mobileExist;
+      } else {
+        userFound = await bcrypt.compare(req.body.pass, emailExist.PWD);
+        userIdentified = emailExist;
+      }
+
       if (userFound) {
         console.log("Successfull login");
-        const { _id, PWD, ...userData } = userFound._doc;
+        const { _id, PWD, ...userData } = userIdentified._doc;
         res.status(200).send(userData);
       } else {
         console.log("Wrong Password");
@@ -32,7 +34,7 @@ const loginUser = async (req, res) => {
     }
   } catch (error) {
     res.status(500).send("Internal Error");
-    console.log("Internal Error");
+    console.log(error);
   }
 };
 

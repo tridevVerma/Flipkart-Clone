@@ -1,24 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import URL from "../../backendURL";
 import { TextField, Button, Typography, Box } from "@material-ui/core";
 
-const initialState = {
-  name: "",
-  email: "",
-  mobileno: "",
-  PWD: "",
-  confirmPWD: "",
-};
-
 const NewUser = (props) => {
-  const [User, setUser] = useState(initialState);
-
-  const clearUser = () => setUser(initialState);
-
-  useEffect(() => {
-    clearUser();
-  }, []);
+  const [User, setUser] = useState({
+    name: "",
+    email: "",
+    mobileno: "",
+    PWD: "",
+    confirmPWD: "",
+  });
+  const [UserExistError, setUserExistError] = useState("");
+  const [PasswordMatchError, setPasswordMatchError] = useState("");
 
   const createNewUser = async (e) => {
     e.preventDefault();
@@ -30,14 +24,13 @@ const NewUser = (props) => {
         alert("New User Created");
       } catch (error) {
         if (error.response.status === 401) {
-          alert("User Already Exists");
+          setUserExistError("User Already Exists");
         }
-        console.log(error);
+        setUserExistError("Validation Error");
       }
     } else {
-      alert("password not matched");
+      setPasswordMatchError("Password and Confirm Password should match");
     }
-    clearUser();
   };
 
   return (
@@ -51,6 +44,17 @@ const NewUser = (props) => {
           value={User.name}
           onChange={(e) => setUser({ ...User, name: e.target.value })}
         />
+        {UserExistError ? (
+          <Typography
+            variant="subtitle2"
+            style={{ fontSize: "0.7rem" }}
+            color="secondary"
+          >
+            {UserExistError}
+          </Typography>
+        ) : (
+          ""
+        )}
         <TextField
           required
           fullWidth
@@ -87,6 +91,17 @@ const NewUser = (props) => {
           value={User.confirmPWD}
           onChange={(e) => setUser({ ...User, confirmPWD: e.target.value })}
         />
+        {PasswordMatchError ? (
+          <Typography
+            variant="subtitle2"
+            style={{ fontSize: "0.7rem" }}
+            color="secondary"
+          >
+            {PasswordMatchError}
+          </Typography>
+        ) : (
+          ""
+        )}
         <Typography
           variant="caption"
           component={Box}

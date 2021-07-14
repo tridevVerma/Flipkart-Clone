@@ -3,7 +3,7 @@ import validator from "validator";
 const newUserSchema = mongoose.Schema({
   name: {
     type: String,
-    required: "true",
+    required: true,
     validate: {
       validator: function (v) {
         return /^[a-z ]{2,20}$/i.test(v);
@@ -13,7 +13,7 @@ const newUserSchema = mongoose.Schema({
   },
   email: {
     type: String,
-    required: "true",
+    required: true,
     trim: true,
     unique: true,
     validate: {
@@ -26,6 +26,7 @@ const newUserSchema = mongoose.Schema({
   mobileno: {
     type: Number,
     unique: true,
+    required: true,
     validate: {
       validator: function (v) {
         return /^\d{10}$/.test(v);
@@ -35,6 +36,7 @@ const newUserSchema = mongoose.Schema({
   },
   PWD: {
     type: String,
+    required: true,
     validate: {
       validator: function (v) {
         return /[a-zA-Z0-9_@!&$-]{5,}/.test(v);

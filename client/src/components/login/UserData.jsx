@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import URL from "../../backendURL";
 import { userLogin } from "../../actions/userLogin";
@@ -10,15 +10,34 @@ import {
   TextField,
   Box,
   Button,
+  makeStyles,
 } from "@material-ui/core";
 
+const useStyles = makeStyles((theme) => ({
+  form: {
+    width: "100%",
+    paddingLeft: "2rem",
+    paddingRight: "2rem",
+    [theme.breakpoints.down("xs")]: {
+      padding: "0rem",
+    },
+  },
+}));
+
 const UserData = (props) => {
+  const classes = useStyles();
   const dispatch = useDispatch();
 
-  const [loginData, setLoginData] = React.useState({
+  const initialState = {
     emailORPhone: "",
     pass: "",
-  });
+  };
+  const [loginData, setLoginData] = useState(initialState);
+
+  const [userError, setuserError] = useState("");
+  const [passwordError, setpasswordError] = useState("");
+
+  const clearUser = () => setLoginData(initialState);
 
   const loginUser = async (e) => {
     e.preventDefault();
@@ -27,18 +46,20 @@ const UserData = (props) => {
       dispatch(userLogin(userResult.data));
     } catch (error) {
       if (error.response && error.response.status === 403) {
-        alert("Wrong Password Entered");
+        setpasswordError("Wrong Password Entered");
       } else if (error.response && error.response.status === 404) {
-        alert("User Not Exist");
+        setuserError("User Don't Exist, Create Your New Account");
       } else {
-        alert("Internal Server Error");
+        console.log("Internal Server Error");
       }
     }
+    clearUser();
   };
   return (
     <>
-      <form onSubmit={(e) => loginUser(e)}>
+      <form onSubmit={(e) => loginUser(e)} className={classes.form}>
         <TextField
+          required
           fullWidth
           margin="normal"
           label="Enter Email/Mobile number"
@@ -47,7 +68,19 @@ const UserData = (props) => {
             setLoginData({ ...loginData, emailORPhone: e.target.value })
           }
         />
+        {userError ? (
+          <Typography
+            variant="subtitle2"
+            style={{ fontSize: "0.7rem" }}
+            color="secondary"
+          >
+            {userError}
+          </Typography>
+        ) : (
+          ""
+        )}
         <TextField
+          required
           fullWidth
           margin="normal"
           type="password"
@@ -68,6 +101,17 @@ const UserData = (props) => {
             ),
           }}
         />
+        {passwordError ? (
+          <Typography
+            variant="subtitle2"
+            style={{ fontSize: "0.7rem" }}
+            color="secondary"
+          >
+            {passwordError}
+          </Typography>
+        ) : (
+          ""
+        )}
         <Typography
           variant="caption"
           component={Box}
