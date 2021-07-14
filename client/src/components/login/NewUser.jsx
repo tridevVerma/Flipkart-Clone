@@ -30,7 +30,7 @@ const NewUser = (props) => {
         alert("New User Created");
       } catch (error) {
         if (error.response.status === 401) {
-          alert("Mobile Number Already Exist");
+          alert("User Already Exists");
         }
         console.log(error);
       }
